@@ -42,30 +42,39 @@ impl<T: Clone> Iterator for Permutator<T> {
                 self.active = false;
                 return Some(vec![self.value.as_ref().unwrap().clone()]);
             } else {
-                let mut perm = match self.curr_perm.as_ref() {
+                let perm = match self.curr_perm.as_ref() {
                     Some(perm) => {
-                        perm.clone()
+                        perm
                     },
                     None => {
                         self.curr_perm = self.rec_permutator.as_mut().expect("Unexpected missing recursive permutation").next();
                         if let Some(perm) = self.curr_perm.as_ref() {
                             self.curr_pos = 0;
-                            perm.clone()
+                            perm
                         } else {
                             self.active = false;
                             return None;
                         }
                     }
                 };
-
-                if self.curr_pos < perm.len() {
-                    perm.insert(self.curr_pos, self.value.as_ref().unwrap().clone());
-                    self.curr_pos += 1
-                } else {
-                    perm.push( self.value.as_ref().unwrap().clone());
+                assert!(self.curr_pos < self.length, "Invalid current position {}>={}", self.curr_pos, self.length);
+                let mut res = Vec::with_capacity(self.length);
+                if self.curr_pos == self.length - 1 {
+                    for read_pos in 0..perm.len() {
+                        res.push(perm[read_pos].clone());
+                    }
+                    res.push(self.value.as_ref().unwrap().clone());
                     self.curr_perm = None;
+                } else {
+                    for read_pos in 0..perm.len() {
+                        if read_pos == self.curr_pos {
+                            res.push(self.value.as_ref().unwrap().clone());
+                        }
+                        res.push(perm[read_pos].clone());
+                    }
+                    self.curr_pos += 1;
                 }
-                Some(perm)
+                Some(res)
             }
         } else {
             None
