@@ -1,16 +1,16 @@
-pub struct Producer<T: Clone> {
+pub struct Permutator<T: Clone> {
     length: usize,
     value: Option<T>,
-    rec_permutation: Option<Box<Producer<T>>>,
+    rec_permutation: Option<Box<Permutator<T>>>,
     curr_perm: Option<Vec<T>>,
     curr_pos: usize,
     active: bool
 }
 
-impl<T: Clone> Producer<T> {
-    pub fn new(values: &[T]) -> Producer<T> {
+impl<T: Clone> Permutator<T> {
+    pub fn new(values: &[T]) -> Permutator<T> {
         if values.is_empty() {
-            Producer {
+            Permutator {
                 length: 0,
                 active: false,
                 value: None,
@@ -21,19 +21,19 @@ impl<T: Clone> Producer<T> {
         } else {
             let length = values.len();
             let value = values[0].clone();
-            Producer {
+            Permutator {
                 length: values.len(),
                 active: true,
                 value: Some(value),
                 curr_perm: None,
                 curr_pos: 0,
-                rec_permutation: if length == 1 { None } else { Some(Box::new(Producer::new(&values[1..]))) }
+                rec_permutation: if length == 1 { None } else { Some(Box::new(Permutator::new(&values[1..]))) }
             }
         }
     }
 }
 
-impl<T: Clone> Iterator for Producer<T> {
+impl<T: Clone> Iterator for Permutator<T> {
     type Item = Vec<T>;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -78,16 +78,16 @@ mod test {
 
     #[test]
     fn test_iterator() {
-        let mut permutation = Producer::new(&["test"]);
+        let mut permutation = Permutator::new(&["test"]);
         assert_eq!(permutation.next(),Some(vec!["test"]));
         assert_eq!(permutation.next(),None);
 
-        let mut permutation = Producer::new(&[1,2]);
+        let mut permutation = Permutator::new(&[1,2]);
         assert_eq!(permutation.next(),Some(vec![1,2]));
         assert_eq!(permutation.next(),Some(vec![2,1]));
         assert_eq!(permutation.next(),None);
 
-        let mut permutation = Producer::new(&[1,2,3]);
+        let mut permutation = Permutator::new(&[1,2,3]);
         assert_eq!(permutation.next(),Some(vec![1,2,3]));
         assert_eq!(permutation.next(),Some(vec![2,1,3]));
         assert_eq!(permutation.next(),Some(vec![2,3,1]));
@@ -96,7 +96,7 @@ mod test {
         assert_eq!(permutation.next(),Some(vec![3,2,1]));
         assert_eq!(permutation.next(),None);
 
-        let mut permutation = Producer::new(&["1","2","3"]);
+        let mut permutation = Permutator::new(&["1","2","3"]);
         assert_eq!(permutation.next(),Some(vec!["1","2","3"]));
         assert_eq!(permutation.next(),Some(vec!["2","1","3"]));
         assert_eq!(permutation.next(),Some(vec!["2","3","1"]));

@@ -1,8 +1,12 @@
 [package]
-name = "permutations"
+name = "simple_permutator"
 version = "0.1.0"
 edition = "2021"
 
+description = "Simple library to create permutations of a list of values.\nEg Permutator::new(&[1,2,3])\ncreates an iterator that yields [1,2,3], [2,1,3], [2,3,1], [1,3,2], [3,1,2], [3,2,1]."
+homepage = "https://etnur.com"
+repository = "https://github.com/samothx/permutations/"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license = "MIT OR Apache-2.0"
 
 [dependencies]
