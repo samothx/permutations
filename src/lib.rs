@@ -1,7 +1,7 @@
 pub struct Permutator<T: Clone> {
     length: usize,
     value: Option<T>,
-    rec_permutation: Option<Box<Permutator<T>>>,
+    rec_permutator: Option<Box<Permutator<T>>>,
     curr_perm: Option<Vec<T>>,
     curr_pos: usize,
     active: bool
@@ -14,7 +14,7 @@ impl<T: Clone> Permutator<T> {
                 length: 0,
                 active: false,
                 value: None,
-                rec_permutation: None,
+                rec_permutator: None,
                 curr_perm: None,
                 curr_pos: 0,
             }
@@ -22,12 +22,12 @@ impl<T: Clone> Permutator<T> {
             let length = values.len();
             let value = values[0].clone();
             Permutator {
-                length: values.len(),
+                length,
                 active: true,
                 value: Some(value),
                 curr_perm: None,
                 curr_pos: 0,
-                rec_permutation: if length == 1 { None } else { Some(Box::new(Permutator::new(&values[1..]))) }
+                rec_permutator: if length == 1 { None } else { Some(Box::new(Permutator::new(&values[1..]))) }
             }
         }
     }
@@ -47,7 +47,7 @@ impl<T: Clone> Iterator for Permutator<T> {
                         perm.clone()
                     },
                     None => {
-                        self.curr_perm = self.rec_permutation.as_mut().expect("Unexpected missing recursive permutation").next();
+                        self.curr_perm = self.rec_permutator.as_mut().expect("Unexpected missing recursive permutation").next();
                         if let Some(perm) = self.curr_perm.as_ref() {
                             self.curr_pos = 0;
                             perm.clone()
@@ -57,6 +57,7 @@ impl<T: Clone> Iterator for Permutator<T> {
                         }
                     }
                 };
+
                 if self.curr_pos < perm.len() {
                     perm.insert(self.curr_pos, self.value.as_ref().unwrap().clone());
                     self.curr_pos += 1
