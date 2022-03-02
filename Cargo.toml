@@ -1,6 +1,6 @@
 [package]
 name = "simple_permutator"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 
 description = "Simple library to create permutations of a list of values.\nEg Permutator::new(&[1,2,3])\ncreates an iterator that yields [1,2,3], [2,1,3], [2,3,1], [1,3,2], [3,1,2], [3,2,1]."

@@ -42,39 +42,34 @@ impl<T: Clone> Iterator for Permutator<T> {
                 self.active = false;
                 return Some(vec![self.value.as_ref().unwrap().clone()]);
             } else {
-                let perm = match self.curr_perm.as_ref() {
+                match self.curr_perm.as_mut() {
                     Some(perm) => {
-                        perm
+                        perm[self.curr_pos - 1] = perm[self.curr_pos].clone();
+                        perm[self.curr_pos] = self.value.as_ref().unwrap().clone();
+                        self.curr_pos += 1;
+                        if self.curr_pos == self.length {
+                            let res = perm.clone();
+                            self.curr_perm = None;
+                            Some(res)
+                        } else {
+                            Some(perm.clone())
+                        }
                     },
                     None => {
-                        self.curr_perm = self.rec_permutator.as_mut().expect("Unexpected missing recursive permutation").next();
-                        if let Some(perm) = self.curr_perm.as_ref() {
-                            self.curr_pos = 0;
-                            perm
+                        if let Some(mut rec_perm) = self.rec_permutator.as_mut().expect("Unexpected missing recursive permutation").next() {
+                            let mut new_perm = Vec::with_capacity(self.length);
+                            new_perm.push(self.value.as_ref().unwrap().clone());
+                            new_perm.append(&mut rec_perm);
+                            let res = new_perm.clone();
+                            self.curr_pos = 1;
+                            self.curr_perm = Some(new_perm);
+                            Some(res)
                         } else {
                             self.active = false;
                             return None;
                         }
                     }
-                };
-                assert!(self.curr_pos < self.length, "Invalid current position {}>={}", self.curr_pos, self.length);
-                let mut res = Vec::with_capacity(self.length);
-                if self.curr_pos == self.length - 1 {
-                    for read_pos in 0..perm.len() {
-                        res.push(perm[read_pos].clone());
-                    }
-                    res.push(self.value.as_ref().unwrap().clone());
-                    self.curr_perm = None;
-                } else {
-                    for read_pos in 0..perm.len() {
-                        if read_pos == self.curr_pos {
-                            res.push(self.value.as_ref().unwrap().clone());
-                        }
-                        res.push(perm[read_pos].clone());
-                    }
-                    self.curr_pos += 1;
                 }
-                Some(res)
             }
         } else {
             None
